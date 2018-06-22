@@ -1,8 +1,8 @@
 ## ROPEmporium
 
-- [ ] ret2win
-- [ ] split
-- [ ] callme
+- [x] ret2win
+- [x] split
+- [x] callme
 - [ ] write4
 - [ ] badchars
 - [ ] fluff
