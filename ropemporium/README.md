@@ -3,7 +3,7 @@
 - [x] ret2win
 - [x] split
 - [x] callme
-- [ ] write4
+- [x] write4
 - [ ] badchars
 - [ ] fluff
 - [ ] pivot
