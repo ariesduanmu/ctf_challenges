@@ -69,6 +69,9 @@ def insert_newballs(field, balls, coordinates):
         ball = balls[i]
         field[r][c] = ball
 
+def move_available(field, placeA, placeB):
+    pass
+
 def move_ball(field, placeA, placeB):
     ra, ca = placeA
     rb, cb = placeB
@@ -93,13 +96,14 @@ def check_lines(field, position):
                 p[1] += direction[i][1]
         if len(continue_piece) >= 5:
             lines.append(list(continue_piece))
-    remove_pieces(field, lines)
-    return len(lines) + sum(len(pieces) for pieces in lines) - 1 if len(lines) > 0 else 0
     
-def remove_pieces(field, lines):
-    for line in lines:
-        for position in line:
-            r, c = list(map(int, position.split(',')))
+    remove_pieces(field, lines)
+    return len(lines) + sum(len(ball) for ball in lines) - 1 if len(lines) > 0 else 0
+    
+def remove_pieces(field, positions):
+    for position in positions:
+        for p in position:
+            r,c = list(map(int,p.split(",")))
             field[r][c] = "."
 
 class TestPyraminx(unittest.TestCase): 
