@@ -39,8 +39,43 @@ which are represented in logs by
 import unittest
 
 def linegame(field, clicks, newBalls, newBallsCoordinates):
-    pass
+    chosen_ball = None
+    newball_idx = 0
+    score = 0
+    for click in clicks:
+        r, c = click
+        if field[r][c] != ".":
+            chosen_ball = click
+            continue          
+        if chosen_ball is not None and field[r][c] == ".":
+            move_ball(field, chosen_ball, click)
+            chosen_ball = None
 
+            s = check_lines(field)
+            if s == 0:
+                insert_newballs(field, 
+                                newBalls[newball_idx:newball_idx+3], 
+                                newBallsCoordinates[newball_idx:newball_idx+3])
+                newball_idx += 3
+                s = check_lines(field)
+            score += s
+    return score
+
+def insert_newballs(field, balls, coordinates):
+    for i in range(len(coordinates)):
+        r, c = coordinates[i]
+        ball = balls[i]
+        field[r][c] = ball
+
+def move_ball(field, placeA, placeB):
+    ra, ca = placeA
+    rb, cb = placeB
+    field[rb][cb] = field[ra][ca]
+    field[ra][ca] = "."
+
+
+def check_lines(field):
+    return 0
 
 class TestPyraminx(unittest.TestCase): 
     def test1(self):
