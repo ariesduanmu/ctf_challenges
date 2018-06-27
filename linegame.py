@@ -81,20 +81,26 @@ def check_lines(field, position):
     directions = [([0, 1], [0, -1]), ([1, 0], [-1, 0]), ([-1, 1], [1, -1]), ([1, 1], [-1, -1])]
     lines = []
     for direction in directions:
-        continue_piece = 0
+        continue_piece = set()
         for i in range(2):
             p = position[:]
             while 0 <= p[0] < 9 and 0 <= p[1] < 9:
                 if field[p[0]][p[1]] == target_color:
-                    continue_piece += 1
+                    continue_piece.add(f"{p[0]},{p[1]}")
                 else:
                     break
                 p[0] += direction[i][0]
                 p[1] += direction[i][1]
-        if continue_piece >= 6:
-            lines.append(continue_piece - 1)
-    return len(lines) + sum(lines) - 1 if len(lines) > 0 else 0
+        if len(continue_piece) >= 5:
+            lines.append(list(continue_piece))
+    remove_pieces(field, lines)
+    return len(lines) + sum(len(pieces) for pieces in lines) - 1 if len(lines) > 0 else 0
     
+def remove_pieces(field, lines):
+    for line in lines:
+        for position in line:
+            r, c = list(map(int, position.split(',')))
+            field[r][c] = "."
 
 class TestPyraminx(unittest.TestCase): 
     def test1(self):
@@ -126,6 +132,36 @@ class TestPyraminx(unittest.TestCase):
         newBalls = []
         newBallsCoordinates = []
         self.assertEqual(linesGame(field, clicks, newBalls, newBallsCoordinates), 17)
+
+    def test3(self):
+        field = [["V",".",".",".",".",".",".",".","."], 
+                 ["V",".",".",".",".",".",".",".","V"], 
+                 ["V",".","O",".","O",".","O",".","."], 
+                 ["V",".",".","O","O","O",".",".","."], 
+                 [".","V","V","V",".",".",".",".","O"], 
+                 ["V",".",".","O","O","O",".",".","."], 
+                 ["V",".","O",".","O",".","O",".","."], 
+                 ["V",".",".",".",".",".",".",".","."], 
+                 ["V",".",".",".",".",".",".",".","."]]
+        clicks = [[4,8], [4,4], [1,8], [4,0]] 
+        newBalls = []
+        newBallsCoordinates = []
+        self.assertEqual(linesGame(field, clicks, newBalls, newBallsCoordinates), 17)
+
+    def test4(self):
+        field = [[".",".",".","G","G",".",".","G","."], 
+                 ["G",".",".",".",".",".",".","G","."], 
+                 [".","G",".",".",".",".",".","G","."], 
+                 [".",".","G",".",".",".",".","G","G"], 
+                 ["G","G","G",".","G","G",".",".","."], 
+                 [".",".",".",".","G",".","G","G","."], 
+                 [".",".",".",".",".","G",".",".","."], 
+                 [".",".",".",".","G",".",".",".","."], 
+                 [".",".",".","G",".",".",".",".","."]]
+        clicks = [[0,3], [4,7], [0,4], [4,3]]
+        newBalls = []
+        newBallsCoordinates = []
+        self.assertEqual(linesGame(field, clicks, newBalls, newBallsCoordinates), 25)
 
 if __name__ == "__main__":
     unittest.main()
