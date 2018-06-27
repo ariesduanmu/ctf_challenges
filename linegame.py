@@ -48,6 +48,8 @@ def linesGame(field, clicks, newBalls, newBallsCoordinates):
             chosen_ball = click
             continue          
         if chosen_ball is not None and field[r][c] == ".":
+            if not move_available(field, chosen_ball, click):
+                continue
             move_ball(field, chosen_ball, click)
             chosen_ball = None
 
@@ -70,6 +72,7 @@ def insert_newballs(field, balls, coordinates):
         field[r][c] = ball
 
 def move_available(field, placeA, placeB):
+    # A* algo
     pass
 
 def move_ball(field, placeA, placeB):
