@@ -65,12 +65,27 @@ def linesGame(field, clicks, newBalls, newBallsCoordinates):
             score += s
     return score
 
-def insert_newballs(field, balls, coordinates):
-    for i in range(len(coordinates)):
-        r, c = coordinates[i]
-        ball = balls[i]
-        field[r][c] = ball
-
+def check_lines(field, position):
+    target_color = field[position[0]][position[1]]
+    directions = [([0, 1], [0, -1]), ([1, 0], [-1, 0]), ([-1, 1], [1, -1]), ([1, 1], [-1, -1])]
+    lines = []
+    for direction in directions:
+        continue_piece = set()
+        for i in range(2):
+            p = position[:]
+            while 0 <= p[0] < 9 and 0 <= p[1] < 9:
+                if field[p[0]][p[1]] == target_color:
+                    continue_piece.add(trans_coordinate_2_string(p))
+                else:
+                    break
+                p[0] += direction[i][0]
+                p[1] += direction[i][1]
+        if len(continue_piece) >= 5:
+            lines.append(list(continue_piece))
+    
+    remove_pieces(field, lines)
+    return len(lines) + sum(len(ball) for ball in lines) - 1 if len(lines) > 0 else 0
+    
 def move_available(field, placeA, placeB):
     moved = set()
     next_moves = set()
@@ -96,6 +111,12 @@ def move_available(field, placeA, placeB):
                 return False
             next_start = trans_string_2_coordinate(next_moves.pop())
 
+def insert_newballs(field, balls, coordinates):
+    for i in range(len(coordinates)):
+        r, c = coordinates[i]
+        ball = balls[i]
+        field[r][c] = ball
+
 def moveable_point(field, r, c):
     return 0 <= r < 9 and 0 <= c < 9 and field[r][c] == "."
 
@@ -111,34 +132,11 @@ def move_ball(field, placeA, placeB):
     field[rb][cb] = field[ra][ca]
     field[ra][ca] = "."
 
-
-def check_lines(field, position):
-    target_color = field[position[0]][position[1]]
-    directions = [([0, 1], [0, -1]), ([1, 0], [-1, 0]), ([-1, 1], [1, -1]), ([1, 1], [-1, -1])]
-    lines = []
-    for direction in directions:
-        continue_piece = set()
-        for i in range(2):
-            p = position[:]
-            while 0 <= p[0] < 9 and 0 <= p[1] < 9:
-                if field[p[0]][p[1]] == target_color:
-                    continue_piece.add(trans_coordinate_2_string(p))
-                else:
-                    break
-                p[0] += direction[i][0]
-                p[1] += direction[i][1]
-        if len(continue_piece) >= 5:
-            lines.append(list(continue_piece))
-    
-    remove_pieces(field, lines)
-    return len(lines) + sum(len(ball) for ball in lines) - 1 if len(lines) > 0 else 0
-    
 def remove_pieces(field, positions):
     for position in positions:
         for p in position:
             r,c = trans_string_2_coordinate(p)
             field[r][c] = "."
-
 
 class TestPyraminx(unittest.TestCase): 
     def test1(self):
