@@ -140,7 +140,7 @@ def remove_pieces(field, positions):
             field[r][c] = "."
 
 
-class TestPyraminx(unittest.TestCase): 
+class TestLineGame(unittest.TestCase): 
     def test1(self):
         field = [['.', 'G', '.', '.', '.', '.', '.', '.', '.'],
                  ['.', '.', '.', '.', '.', '.', '.', 'V', '.'],
