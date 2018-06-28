@@ -72,7 +72,6 @@ def insert_newballs(field, balls, coordinates):
         field[r][c] = ball
 
 def move_available(field, placeA, placeB):
-    # A* algo
     moved = set()
     next_moves = set()
     directions = [(0,1),(0,-1),(1,0),(-1,0)]
@@ -88,9 +87,9 @@ def move_available(field, placeA, placeB):
                 if trans_coordinate_2_string([r,c]) in moved:
                     continue
                 next_moves.add(trans_coordinate_2_string([r,c]))
-                moves += [[[r,c], abs(r-placeB[0])+abs(c-placeB[1])]]
+                moves += [[r,c]]
         if len(moves) > 0:
-            next_start = sorted(moves, key=lambda x:x[1])[0][0]
+            next_start = moves[0]
             next_moves.remove(trans_coordinate_2_string(next_start))
         else:
             if len(next_moves) == 0:
