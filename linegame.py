@@ -53,22 +53,24 @@ def linesGame(field, clicks, newBalls, newBallsCoordinates):
             move_ball(field, chosen_ball, click)
             chosen_ball = None
 
-            s = check_lines(field, click)
-            if s == 0:
+            lines = check_lines(field, click)
+            if len(lines) == 0:
                 insert_newballs(field, 
                                 newBalls[newball_idx:newball_idx+3], 
                                 newBallsCoordinates[newball_idx:newball_idx+3])
                 for coordinate in newBallsCoordinates[newball_idx:newball_idx+3]:
-                    s += check_lines(field, coordinate)
+                    lines |= check_lines(field, coordinate)
                 newball_idx += 3
                 
-            score += s
+            score += len(lines) + sum(len(ball.split("|")) for ball in lines) - 1 if len(lines) > 0 else 0
+            remove_pieces(field, lines)
+            
     return score
 
 def check_lines(field, position):
     target_color = field[position[0]][position[1]]
     directions = [([0, 1], [0, -1]), ([1, 0], [-1, 0]), ([-1, 1], [1, -1]), ([1, 1], [-1, -1])]
-    lines = []
+    lines = set()
     for direction in directions:
         continue_piece = set()
         for i in range(2):
@@ -81,10 +83,8 @@ def check_lines(field, position):
                 p[0] += direction[i][0]
                 p[1] += direction[i][1]
         if len(continue_piece) >= 5:
-            lines.append(list(continue_piece))
-    
-    remove_pieces(field, lines)
-    return len(lines) + sum(len(ball) for ball in lines) - 1 if len(lines) > 0 else 0
+            lines.add('|'.join(sorted(list((continue_piece)))))
+    return lines
     
 def move_available(field, placeA, placeB):
     moved = set()
@@ -134,9 +134,11 @@ def move_ball(field, placeA, placeB):
 
 def remove_pieces(field, positions):
     for position in positions:
+        position = position.split("|")
         for p in position:
             r,c = trans_string_2_coordinate(p)
             field[r][c] = "."
+
 
 class TestPyraminx(unittest.TestCase): 
     def test1(self):
@@ -199,6 +201,56 @@ class TestPyraminx(unittest.TestCase):
         newBallsCoordinates = []
         self.assertEqual(linesGame(field, clicks, newBalls, newBallsCoordinates), 25)
 
+    def test5(self):
+        field = [[".","R","R","R",".","R",".","G","."], 
+                 ["G",".",".",".",".",".",".","G","."], 
+                 [".","G",".",".",".",".",".","G","."], 
+                 [".",".","G",".",".",".",".","G","G"], 
+                 ["G","G","G",".","G","G",".",".","."], 
+                 [".",".",".",".","G",".","G","G","."], 
+                 [".",".",".",".",".","G",".",".","."], 
+                 [".",".",".",".","G",".",".",".","."], 
+                 [".",".",".","G",".",".",".",".","."]]
+        clicks = [[0,5], [0,4]]
+        newBalls = ["G", "G", "R"]
+        newBallsCoordinates = [[4,3], [4,7], [0,0]]
+        self.assertEqual(linesGame(field, clicks, newBalls, newBallsCoordinates), 33)
+
+    def test6(self):
+
+        field = [["R","R","R","R",".","R",".","G","."], 
+                 ["G",".",".",".",".",".",".","G","."], 
+                 [".","G",".",".",".",".",".","G","."], 
+                 [".",".","G",".",".",".",".","G","G"], 
+                 ["G","G","G",".","G","G",".",".","."], 
+                 [".",".",".",".","G",".","G","G","."], 
+                 [".",".",".",".",".","G",".",".","."], 
+                 [".",".",".",".","G",".",".","G","."], 
+                 [".",".",".","G",".",".",".","G","."]]
+        clicks = [[0,5], [0,4], [0,7], [6,7]]
+        newBalls = ["G", "G", "R"]
+        newBallsCoordinates = [[4,3], [4,7], [0,0]]
+        self.assertEqual(linesGame(field, clicks, newBalls, newBallsCoordinates), 34)
+
+    def test7(self):
+
+        field = [["Y",".",".",".",".",".",".",".","Y"], 
+                 [".","Y",".",".",".",".",".",".","."], 
+                 [".",".","Y",".",".",".",".",".","."], 
+                 [".",".",".","Y",".",".",".",".","."], 
+                 [".",".",".",".",".",".",".",".","."], 
+                 [".",".",".",".",".","Y",".",".","."], 
+                 [".",".",".",".",".",".","Y",".","."], 
+                 [".",".",".",".",".",".",".","Y","."], 
+                 [".",".",".",".","Y","Y","Y","Y","."]]
+        clicks = [[0,8], [8,8], [0,0], [8,8]]
+        newBalls = ["G", "Y", "Y"]
+        newBallsCoordinates = [[0,1], [4,4], [0,0]]
+        self.assertEqual(linesGame(field, clicks, newBalls, newBallsCoordinates), 14)
+
+
 if __name__ == "__main__":
     unittest.main()
+
+
 
