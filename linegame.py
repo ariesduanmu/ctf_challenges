@@ -73,7 +73,38 @@ def insert_newballs(field, balls, coordinates):
 
 def move_available(field, placeA, placeB):
     # A* algo
-    pass
+    moved = set()
+    next_moves = set()
+    directions = [(0,1),(0,-1),(1,0),(-1,0)]
+    next_start = placeA
+    while True:
+        if next_start == placeB:
+            return True
+        moved.add(trans_coordinate_2_string(next_start))
+        moves = []
+        for direction in directions:
+            r, c = next_start[0]+direction[0], next_start[1]+direction[1]
+            if moveable_point(field, r, c):
+                if trans_coordinate_2_string([r,c]) in moved:
+                    continue
+                next_moves.add(trans_coordinate_2_string([r,c]))
+                moves += [[[r,c], abs(r-placeB[0])+abs(c-placeB[1])]]
+        if len(moves) > 0:
+            next_start = sorted(moves, key=lambda x:x[1])[0][0]
+            next_moves.remove(trans_coordinate_2_string(next_start))
+        else:
+            if len(next_moves) == 0:
+                return False
+            next_start = trans_string_2_coordinate(next_moves.pop())
+
+def moveable_point(field, r, c):
+    return 0 <= r < 9 and 0 <= c < 9 and field[r][c] == "."
+
+def trans_coordinate_2_string(coordinate):
+    return f"{coordinate[0]},{coordinate[1]}"
+
+def trans_string_2_coordinate(coordinate_string):
+    return list(map(int, coordinate_string.split(",")))
 
 def move_ball(field, placeA, placeB):
     ra, ca = placeA
@@ -92,7 +123,7 @@ def check_lines(field, position):
             p = position[:]
             while 0 <= p[0] < 9 and 0 <= p[1] < 9:
                 if field[p[0]][p[1]] == target_color:
-                    continue_piece.add(f"{p[0]},{p[1]}")
+                    continue_piece.add(trans_coordinate_2_string(p))
                 else:
                     break
                 p[0] += direction[i][0]
@@ -106,8 +137,9 @@ def check_lines(field, position):
 def remove_pieces(field, positions):
     for position in positions:
         for p in position:
-            r,c = list(map(int,p.split(",")))
+            r,c = trans_string_2_coordinate(p)
             field[r][c] = "."
+
 
 class TestPyraminx(unittest.TestCase): 
     def test1(self):
