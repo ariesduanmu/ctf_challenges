@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+ # -*- coding: utf-8 -*-
 '''
 Let's remember the '90s and play an old-school Lines (wikipedia reference) game 
 with the following rules.
