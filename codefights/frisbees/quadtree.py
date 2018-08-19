@@ -36,6 +36,10 @@ class QuadTree():
                     points += child.query(circle)
         return points
 
+    def throwable_nosort(self, circle):
+        points = self.query(circle)
+        return [i for i,_ in points]
+
     def throwable(self, circle):
         points = self.query(circle)
 
