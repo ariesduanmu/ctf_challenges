@@ -2,6 +2,7 @@
 from quadtree import QuadTree 
 from time import time
 from random import randint
+import matplotlib.pyplot as plt
 
 def tree(points):
     start = time()
@@ -13,9 +14,10 @@ def tree(points):
     qt = QuadTree((center_x, center_y, width, height), 4)
     for i in range(len(points)):
         qt.insert([i]+points[i])
-    print(f"After insert node {time()-start}")
-    # return [qt.throwable([i]+points[i]) for i in range(len(points))]
-    return [qt.throwable_nosort([i]+points[i]) for i in range(len(points))]
+    # throwable_points = [qt.throwable([i]+points[i]) for i in range(len(points))]
+    # print(f"Time used to gather all points without sort { sum(t for _,t in throwable_points)}")
+    return [qt.throwable([i]+points[i]) for i in range(len(points))]
+    # return [qt.throwable_nosort([i]+points[i]) for i in range(len(points))]
 
 def notree(points):
     distance = lambda f, s: (f[0] - s[0])**2 + (f[1] - s[1])**2
@@ -26,24 +28,35 @@ def notree(points):
             for i, f in enumerate(points)
             if s != f and distance(f, s) <= s[2]**2
         ]
-        # throwable_points.append([
-        #     i for i, _ in sorted(reachable_points, key=lambda i: i[1], reverse=True)
-        # ])
         throwable_points.append([
-            i for i, _ in reachable_points
+            i for i, _ in sorted(reachable_points, key=lambda i: i[1], reverse=True)
         ])
+        # throwable_points.append([
+        #     i for i, _ in reachable_points
+        # ])
     return throwable_points
 
-def main():
-    points = [[randint(0,500), randint(0,500), randint(0,200)] for i in range(5000)]
+def main(n):
+    points = [[randint(0,400), randint(0,400), randint(0,500)] for i in range(n)]
     start = time()
-    tree(points)
-    print(f"[+] Time for quadtree {time()-start}")
+    throwable_points = tree(points)
+    t1 = time()-start
 
     start = time()
-    notree(points)
-    print(f"[+] Time for notree {time()-start}")
+    throwable_points = notree(points)
+    t2 = time()-start
+
+    return t1, t2
 
 if __name__ == "__main__":
-    main()
+    tree_t = []
+    notree_t = []
+
+    for _ in range(1000):
+        t1,t2 = main(100)
+        tree_t.append(t1)
+        notree_t.append(t2)
+    plt.plot(tree_t, 'r', label="Tree")
+    plt.plot(notree_t, 'b', label="NOTree")
+    plt.show()
 

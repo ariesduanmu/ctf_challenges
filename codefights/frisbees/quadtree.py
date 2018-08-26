@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+from time import time
+import math
+
 class QuadTree():
     def __init__(self, boundry, capacity):
         self.boundry = boundry
@@ -41,9 +44,10 @@ class QuadTree():
         return [i for i,_ in points]
 
     def throwable(self, circle):
+        start = time()
         points = self.query(circle)
-
-        return [i for i,_ in sorted(points, key=lambda x:x[1])]
+        e = time() - start
+        return [i for i,_ in sorted(points, key=lambda x:x[1])], e
 
     def _divisional(self):
         x, y, w, h = self.boundry
@@ -59,7 +63,7 @@ class QuadTree():
         b -= y
         dx = max(min(a, w), -w)
         dy = max(min(b, h), -h)
-        return (dx-a) ** 2 + (dy-b) ** 2 <= r ** 2
+        return math.hypot((dx-a), (dy-b)) <= r
 
 
     def _inrange(self, point):
