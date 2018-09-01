@@ -8,10 +8,15 @@ assuming both players make optimal choices.
 
 
 import unittest
+from time import time
+
+d = {}
 def gameOfMath(expression):
+    global d
     expression = expression.split(" ")
     numbers = [int(expression[i]) for i in range(len(expression)) if i % 2 == 0]
     operators = [expression[i] for i in range(len(expression)) if i % 2 == 1]
+    d = {}
     return numbers[0] if len(operators) == 0 else progress(numbers, operators, True)
 
 def progress(numbers, operators, me):
@@ -27,6 +32,35 @@ def progress(numbers, operators, me):
         if (v > e) != me:
             e = v
     return e
+
+def gameOfMath_d(expression):
+    expression = expression.split(" ")
+    numbers = [int(expression[i]) for i in range(len(expression)) if i % 2 == 0]
+    operators = [expression[i] for i in range(len(expression)) if i % 2 == 1]
+    return numbers[0] if len(operators) == 0 else progress_d(numbers, operators, True)
+
+def progress_d(numbers, operators, me):
+    global d
+    k = ",".join(list(map(str, numbers)) + operators)
+    if k not in d:
+        d[k] = 1
+    else:
+        return d[k]
+    fO = operation(numbers[0], numbers[1], operators[0])
+    if len(operators) == 1:
+        return fO
+
+    e = progress([fO] + numbers[2:], operators[1:], not me)
+
+    for i in range(1, len(operators)):
+        n = operation(numbers[i], numbers[i+1], operators[i])
+        v = progress(numbers[:i] + [n] + numbers[i+2:], operators[:i]+operators[i+1:], not me)
+        if (v > e) != me:
+            e = v
+    d[k] = e
+    return e
+
+
 
 def operation(a, b, o):
     if o == "+":
@@ -52,9 +86,13 @@ def test():
                    "5 + 5 - 2 * 1 - 3 - 2 * 5 * 9"]
     for expression in expressions:
         print(f"Expression: {expression}")
+        start = time()
         gameOfMath(expression)
+        print(f"[1] Time Used:{time() - start}")
+        start = time()
+        gameOfMath_d(expression)
+        print(f"[2] Time Used:{time() - start}")
         print()
-    
 
 
 class GameOfMathTest(unittest.TestCase):
@@ -115,5 +153,5 @@ class GameOfMathTest(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
-    # test()
+    # unittest.main()
+    test()
