@@ -1,79 +1,42 @@
 # -*- coding: utf-8 -*-
+# I stealed this solution because it is so great
+'''
+Given the expression in the form of a string, 
+your task is to find the best (minimal) result you can achieve, 
+assuming both players make optimal choices.
+'''
+
+
 import unittest
 def gameOfMath(expression):
     expression = expression.split(" ")
-    o = set([e for e in expression if not ("0"<=e<="9")])
-    if len(o) == 0:
-        return int(expression[0])
-    d = {}
-    from itertools import permutations
-    operations = sorted(list(permutations(o,len(o))))
-    for e in operations:
-        n = expression
-        for i in e: 
-            n = afterOperate(i, n)
-        for i in range(1,len(e)+1):
-            x = "".join(e[:i])
-            if x not in d:
-                d[x] = [n[0]]
-            else:
-                d[x].append(n[0])
-    print(d)
-    r = []
-    for i in o:
-        if len(d[i]) == 1:
-            r.append(d[i][0])
-        elif len(d[i]) == 2:
-            r.append(max(d[i]))
-        elif len(d[i]) == 6:
-            r.append(max([min(d[i][j:j+2]) for j in range(0,6,2)]))
+    numbers = [int(expression[i]) for i in range(len(expression)) if i % 2 == 0]
+    operators = [expression[i] for i in range(len(expression)) if i % 2 == 1]
+    return numbers[0] if len(operators) == 0 else progress(numbers, operators, True)
 
-    print(r)
-    return min(r)
+def progress(numbers, operators, me):
+    fO = operation(numbers[0], numbers[1], operators[0])
+    if len(operators) == 1:
+        return fO
 
-def afterOperate(operate, expression):
-    o = {"+":lambda a,b:a+b,
-         "-":lambda a,b:a-b,
-         "*":lambda a,b:a*b,
-         "/":lambda a,b:a//b}
-    next_expression = []
-    i = 0
-    while i < len(expression):
-        e = expression[i]
-        if e == operate:
-            next_expression.append(o[e](int(next_expression.pop()),int(expression[i+1])))
-            i += 1
-        else:
-            next_expression.append(e)
-        i += 1
-    return next_expression
+    e = progress([fO] + numbers[2:], operators[1:], not me)
 
+    for i in range(1, len(operators)):
+        n = operation(numbers[i], numbers[i+1], operators[i])
+        v = progress(numbers[:i] + [n] + numbers[i+2:], operators[:i]+operators[i+1:], not me)
+        if (v > e) != me:
+            e = v
+    return e
 
-''' 
-'*': [-85, -85],
-
-'*+': [-85], 
-'*+-': [-85], 
-
-'*-': [-85], 
-'*-+': [-85], 
-
-'+': [-85, -1440], 
-
-'+*': [-85], 
-'+*-': [-85], 
-
-'+-': [-1440], 
-'+-*': [-1440], 
-
-'-': [-535, -1440], 
-
-'-*': [-535], 
-'-*+': [-535], 
-
-'-+': [-1440], 
-'-+*': [-1440]
-'''
+def operation(a, b, o):
+    if o == "+":
+        return a + b
+    elif o == "-":
+        return a - b
+    elif o == "*":
+        return a * b
+    elif o == "/":
+        return a // b
 
 def test():
     expressions = ["7 - 3 * 5 / 2",
@@ -152,5 +115,5 @@ class GameOfMathTest(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    # unittest.main()
-    test()
+    unittest.main()
+    # test()
