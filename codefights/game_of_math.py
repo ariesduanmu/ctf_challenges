@@ -9,21 +9,28 @@ import unittest
 from cProfile import Profile
 from pstats import Stats
 import tracemalloc
+from functools import wraps
 
 d = {}
+
+def trace(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        result = func(*args, **kwargs)
+        print(f"{func.__name__}({args}, {kwargs}) -> {result}")
+    return wrapper
+
 def gameOfMath(expression):
-    global d
     expression = expression.split(" ")
     numbers = [int(expression[i]) for i in range(len(expression)) if i % 2 == 0]
     operators = [expression[i] for i in range(len(expression)) if i % 2 == 1]
-    d = {}
     return numbers[0] if len(operators) == 0 else progress(numbers, operators, True)
+
 
 def progress(numbers, operators, me):
     fO = operation(numbers[0], numbers[1], operators[0])
     if len(operators) == 1:
         return fO
-
     e = progress([fO] + numbers[2:], operators[1:], not me)
 
     for i in range(1, len(operators)):
@@ -34,9 +41,11 @@ def progress(numbers, operators, me):
     return e
 
 def gameOfMath_d(expression):
+    global d
     expression = expression.split(" ")
     numbers = [int(expression[i]) for i in range(len(expression)) if i % 2 == 0]
     operators = [expression[i] for i in range(len(expression)) if i % 2 == 1]
+    d = {}
     return numbers[0] if len(operators) == 0 else progress_d(numbers, operators, True)
 
 def progress_d(numbers, operators, me):
@@ -84,6 +93,7 @@ def expressions():
             "5 - 0 * 3 + 0 * 9 - 5 * 0 + 1",
             "2 + 3 * 7",
             "5 + 5 - 2 * 1 - 3 - 2 * 5 * 9"]
+
 
 def profile_test():
     for expression in expressions():
@@ -176,7 +186,7 @@ class GameOfMathTest(unittest.TestCase):
 if __name__ == "__main__":
     # unittest.main()
     # profile_test()
-    malloc_test()
+    # malloc_test()
 
 
 
