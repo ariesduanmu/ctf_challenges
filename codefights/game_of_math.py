@@ -8,7 +8,7 @@ assuming both players make optimal choices.
 import unittest
 from cProfile import Profile
 from pstats import Stats
-from time import time
+import tracemalloc
 
 d = {}
 def gameOfMath(expression):
@@ -72,20 +72,21 @@ def operation(a, b, o):
     elif o == "/":
         return a // b
 
-def test():
-    expressions = ["7 - 3 * 5 / 2",
-                   "5 + 1 - 7 * 2",
-                   "7 + 2 * 3 - 5",
-                   "5 / 2 - 9 + 2 * 7",
-                   "7 - 3 * 5",
-                   "5 * 2 * 3 * 6 * 4",
-                   "7 / 9 / 4 / 2",
-                   "9",
-                   "5 - 0 * 3 + 0 * 9 - 5 * 0 + 1",
-                   "2 + 3 * 7",
-                   "5 + 5 - 2 * 1 - 3 - 2 * 5 * 9"]
-    
-    for expression in expressions:
+def expressions():
+    return ["7 - 3 * 5 / 2",
+            "5 + 1 - 7 * 2",
+            "7 + 2 * 3 - 5",
+            "5 / 2 - 9 + 2 * 7",
+            "7 - 3 * 5",
+            "5 * 2 * 3 * 6 * 4",
+            "7 / 9 / 4 / 2",
+            "9",
+            "5 - 0 * 3 + 0 * 9 - 5 * 0 + 1",
+            "2 + 3 * 7",
+            "5 + 5 - 2 * 1 - 3 - 2 * 5 * 9"]
+
+def profile_test():
+    for expression in expressions():
         print(f"Expression: {expression}")
         profiler = Profile()
         profiler.runcall(gameOfMath, expression)
@@ -101,6 +102,18 @@ def test():
         stats.sort_stats('cumulative')
         stats.print_stats()
         print()
+
+def malloc_test():
+    for expression in expressions():
+        tracemalloc.start(3)
+        time1 = tracemalloc.take_snapshot()
+        gameOfMath_d(expression)
+        time2 = tracemalloc.take_snapshot()
+        stats = time2.compare_to(time1, 'lineno')
+        for stat in stats:
+            print(stat)
+        print()
+
 
 
 class GameOfMathTest(unittest.TestCase):
@@ -162,4 +175,9 @@ class GameOfMathTest(unittest.TestCase):
 
 if __name__ == "__main__":
     # unittest.main()
-    test()
+    # profile_test()
+    malloc_test()
+
+
+
+
