@@ -8,6 +8,7 @@ assuming both players make optimal choices.
 import unittest
 from cProfile import Profile
 from pstats import Stats
+from time import time
 
 d = {}
 def gameOfMath(expression):
@@ -49,11 +50,11 @@ def progress_d(numbers, operators, me):
     if len(operators) == 1:
         return fO
 
-    e = progress([fO] + numbers[2:], operators[1:], not me)
+    e = progress_d([fO] + numbers[2:], operators[1:], not me)
 
     for i in range(1, len(operators)):
         n = operation(numbers[i], numbers[i+1], operators[i])
-        v = progress(numbers[:i] + [n] + numbers[i+2:], operators[:i]+operators[i+1:], not me)
+        v = progress_d(numbers[:i] + [n] + numbers[i+2:], operators[:i]+operators[i+1:], not me)
         if (v > e) != me:
             e = v
     d[k] = e
@@ -83,15 +84,17 @@ def test():
                    "5 - 0 * 3 + 0 * 9 - 5 * 0 + 1",
                    "2 + 3 * 7",
                    "5 + 5 - 2 * 1 - 3 - 2 * 5 * 9"]
-    profiler = Profile()
+    
     for expression in expressions:
         print(f"Expression: {expression}")
+        profiler = Profile()
         profiler.runcall(gameOfMath, expression)
         stats = Stats(profiler)
         stats.strip_dirs()
         stats.sort_stats('cumulative')
         stats.print_stats()
         print()
+        profiler = Profile()
         profiler.runcall(gameOfMath_d, expression)
         stats = Stats(profiler)
         stats.strip_dirs()
