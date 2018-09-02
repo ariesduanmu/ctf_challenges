@@ -5,10 +5,9 @@ Given the expression in the form of a string,
 your task is to find the best (minimal) result you can achieve, 
 assuming both players make optimal choices.
 '''
-
-
 import unittest
-from time import time
+from cProfile import Profile
+from pstats import Stats
 
 d = {}
 def gameOfMath(expression):
@@ -84,14 +83,20 @@ def test():
                    "5 - 0 * 3 + 0 * 9 - 5 * 0 + 1",
                    "2 + 3 * 7",
                    "5 + 5 - 2 * 1 - 3 - 2 * 5 * 9"]
+    profiler = Profile()
     for expression in expressions:
         print(f"Expression: {expression}")
-        start = time()
-        gameOfMath(expression)
-        print(f"[1] Time Used:{time() - start}")
-        start = time()
-        gameOfMath_d(expression)
-        print(f"[2] Time Used:{time() - start}")
+        profiler.runcall(gameOfMath, expression)
+        stats = Stats(profiler)
+        stats.strip_dirs()
+        stats.sort_stats('cumulative')
+        stats.print_stats()
+        print()
+        profiler.runcall(gameOfMath_d, expression)
+        stats = Stats(profiler)
+        stats.strip_dirs()
+        stats.sort_stats('cumulative')
+        stats.print_stats()
         print()
 
 
