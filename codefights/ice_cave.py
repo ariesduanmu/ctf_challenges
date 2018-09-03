@@ -41,14 +41,15 @@ def start2goal(position, goal, area, direction):
                     pass
 
         passed.append(f"")
-
-
-
     if not found:
         return None
     return step
 
-
+def test():
+    area = [[" "," "," "], 
+            [" ","G"," "]]
+    direction = "N"
+    
 
 class TestIceCave(unittest.TestCase): 
     def test1(self):

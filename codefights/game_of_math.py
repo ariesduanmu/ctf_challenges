@@ -2,91 +2,36 @@
 import unittest
 def gameOfMath(expression):
     expression = expression.split(" ")
-    o = set([e for e in expression if not ("0"<=e<="9")])
-    if len(o) == 0:
-        return int(expression[0])
-    d = {}
-    from itertools import permutations
-    operations = sorted(list(permutations(o,len(o))))
-    for e in operations:
-        n = expression
-        for i in e: 
-            n = afterOperate(i, n)
-        for i in range(1,len(e)+1):
-            x = "".join(e[:i])
-            if x not in d:
-                d[x] = [n[0]]
-            else:
-                d[x].append(n[0])
-    print(d)
-    r = []
-    for i in o:
-        if len(d[i]) == 1:
-            r.append(d[i][0])
-        elif len(d[i]) == 2:
-            r.append(max(d[i]))
-        elif len(d[i]) == 6:
-            r.append(max([min(d[i][j:j+2]) for j in range(0,6,2)]))
+    possibles = []
+    recurse(expression, [], possibles)
+    print(possibles)
 
-    print(r)
-    return min(r)
-
-def afterOperate(operate, expression):
+def recurse(expression, steps, possibles):
+    steps.append(expression)
+    if len(expression) <= 1:
+        possibles.append([steps])
+        return
+    else:
+        for i in range(1,len(expression),2):
+            recurse(afterOperate(i, expression), steps, possibles)
+def afterOperate(operate_n, expression):
+    e = expression[:]
     o = {"+":lambda a,b:a+b,
          "-":lambda a,b:a-b,
          "*":lambda a,b:a*b,
          "/":lambda a,b:a//b}
-    next_expression = []
-    i = 0
-    while i < len(expression):
-        e = expression[i]
-        if e == operate:
-            next_expression.append(o[e](int(next_expression.pop()),int(expression[i+1])))
-            i += 1
-        else:
-            next_expression.append(e)
-        i += 1
-    return next_expression
+    r = o[e[operate_n]](int(e[operate_n-1]),int(e[operate_n+1]))
+    del e[operate_n-1]
+    del e[operate_n-1]
+    e[operate_n-1] = r
+    return e
+    
 
-
-''' 
-'*': [-85, -85],
-
-'*+': [-85], 
-'*+-': [-85], 
-
-'*-': [-85], 
-'*-+': [-85], 
-
-'+': [-85, -1440], 
-
-'+*': [-85], 
-'+*-': [-85], 
-
-'+-': [-1440], 
-'+-*': [-1440], 
-
-'-': [-535, -1440], 
-
-'-*': [-535], 
-'-*+': [-535], 
-
-'-+': [-1440], 
-'-+*': [-1440]
-'''
 
 def test():
-    expressions = ["7 - 3 * 5 / 2",
-                   "5 + 1 - 7 * 2",
-                   "7 + 2 * 3 - 5",
-                   "5 / 2 - 9 + 2 * 7",
-                   "7 - 3 * 5",
-                   "5 * 2 * 3 * 6 * 4",
-                   "7 / 9 / 4 / 2",
-                   "9",
+    expressions = [
                    "5 - 0 * 3 + 0 * 9 - 5 * 0 + 1",
-                   "2 + 3 * 7",
-                   "5 + 5 - 2 * 1 - 3 - 2 * 5 * 9"]
+                   ]
     for expression in expressions:
         print(f"Expression: {expression}")
         gameOfMath(expression)
