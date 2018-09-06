@@ -3,6 +3,11 @@ import unittest
 from cProfile import Profile
 from pstats import Stats
 
+'''
+Brute Force solution(get TLE)
+'''
+
+'''
 d = {}
 def primeNumberNim(pileSize, maxRemoval):
     global d
@@ -31,14 +36,6 @@ def win(pileSize, options, me):
     return r
 
 def primes(maxRemoval):
-    '''Find all primes less or equal maxRemoval
-
-    Args:
-        maxRemoval: the max number 
-
-    Return:
-        list of primes
-    '''
     p = [0 for _ in range(maxRemoval+1)]
     p[2] = 1
     p[3] = 1
@@ -52,12 +49,29 @@ def primes(maxRemoval):
             p[i] = 1
     return [i for i in range(maxRemoval+1) if p[i] == 1]
 
-def test():
-    examples = [10, 9], [8, 7], [13, 13], [42, 41]
-    for pileSize, maxRemoval in examples:
-        print(primeNumberNim(pileSize, maxRemoval))
+'''
+# Interesting relative links
+# https://books.google.com/books?id=8-FlYl6-ML8C&lpg=PA59&ots=vW5Sv__2or&dq=shannon+nim+PRIME&pg=PA59&hl=en#v=onepage&q&f=false
+# https://math.stackexchange.com/questions/226230/prime-one-heap-nim?newreg=d5796232411d47b6bfeedfecf22c9e74
+def primeNumberNim(pileSize, maxRemoval):
+    # build list of primes with Sieve of Eratosthenes
+    l = [1]
+    M = l * maxRemoval + l
+    primes = []
+    q = 2
+    for q in range(2,maxRemoval+1):
+        if M[q]:
+            M[q*2::q] = [0] * ((maxRemoval-q)//q)
+            primes.append(q)
 
-
+    # DP to solve
+    D = l * (pileSize + maxRemoval)
+    for n in range(pileSize):
+        if D[n]:
+            # if n is a win, set all the removals above it to lose
+            for p in primes:
+                D[n+p] = 0
+    return [p for p in primes if D[pileSize-p]]
 
 class NimGameTest(unittest.TestCase):
     def test_1(self):
@@ -135,6 +149,4 @@ def profile_test():
     stats.print_stats()
 
 if __name__ == "__main__":
-    # unittest.main()
-    # profile_test()
-    test()
+    unittest.main()
