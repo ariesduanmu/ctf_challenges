@@ -1,4 +1,16 @@
 # -*- coding: utf-8 -*-
+'''
+A Knight may move from 0 to 7 squares, and can then attack an enemy 
+directly above, below, to the left or to the right of their new position. 
+(An immediate diagonal square counts as a distance of 2, such as up and 
+to the right, and is out of range).
+
+An Archer may move from 0 to 4 squares, but their attack is ineffective 
+at close range. After moving, they may fire at an enemy exactly three 
+squares away (see diagram below). Archers may fire over other units 
+(the arrow flies above all obstacles on a third dimension above the 
+battlefield).
+'''
 import unittest
 def swordsAndArrows(grid):
     pass
