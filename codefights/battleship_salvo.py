@@ -27,50 +27,33 @@ import unittest
 
 def battleshipSalvo(player1Board, player2Board, shotsFired):
     d = {
-        "A":"Carrier",
-        "B":"Battleship",
-        "D":"Destroyer",
-        "S":"Submarine",
-        "P":"Patrol Boat"
-        }
-    p1 = {
-        "A":5,
-        "B":4,
-        "D":3,
+        "A":0,
+        "B":1,
+        "D":2,
         "S":3,
-        "P":2
-        }
-    p2 = {
-        "A":5,
-        "B":4,
-        "D":3,
-        "S":3,
-        "P":2
-        }
+        "P":4
+    }
+    names = ["Carrier", "Battleship", "Destroyer", "Submarine", "Patrol Boat"]
+    player1_ships = [5,4,3,3,2]
+    player2_ships = [5,4,3,3,2]
+    players= [[player1_ships,player2_ships,player2Board,"Player 2 ","Player 1 "],
+              [player2_ships,player1_ships,player1Board,"Player 1 ","Player 2 "]]
     i = 0
     attacker = 0
     report = []
     while i < len(shotsFired):
-        p = p1 if attacker == 0 else p2
-        q = p2 if attacker == 0 else p1
-        a = player1Board if attacker == 1 else player2Board
-        n = "Player 1 " if attacker == 1 else "Player 2 "
-        c = sum([1 for k in p if p[k] > 0])
-        print(n,p,q)
+        attacker_ships,victim_ships,victim_board,victim_name,attacker_name = players[attacker]
+        c = sum([k>0 for k in attacker_ships])
         for j in range(i,min(len(shotsFired),i+c)):
             s = shotsFired[j]
-            b = attacked(a,s)
-            print(s,b)
+            b = attacked(victim_board,s)
             if b != ".":
-                q[b] -= 1
-                if q[b] > 0:
-                    report.append(n + d[b] + " hit!")
-                elif q[b] == 0:
-                    report.append(n + d[b] + " sunk!")
+                victim_ships[d[b]] -= 1
+                act = " sunk!" if victim_ships[d[b]] == 0 else " hit!"
+                report.append(victim_name + names[d[b]] + act)
                 
-                if sum([1 for k in p if q[k] > 0]) == 0:
-                    m = "Player 1 " if attacker == 0 else "Player 2 "
-                    report.append(m + "wins!")
+                if sum([k>0 for k in victim_ships]) == 0:
+                    report.append(attacker_name + "wins!")
                     return report
                     
         i += c
