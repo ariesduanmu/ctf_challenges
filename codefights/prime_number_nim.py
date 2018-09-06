@@ -50,7 +50,9 @@ def primes(maxRemoval):
     return [i for i in range(maxRemoval+1) if p[i] == 1]
 
 '''
-
+# Interesting relative links
+# https://books.google.com/books?id=8-FlYl6-ML8C&lpg=PA59&ots=vW5Sv__2or&dq=shannon+nim+PRIME&pg=PA59&hl=en#v=onepage&q&f=false
+# https://math.stackexchange.com/questions/226230/prime-one-heap-nim?newreg=d5796232411d47b6bfeedfecf22c9e74
 def primeNumberNim(pileSize, maxRemoval):
     # build list of primes with Sieve of Eratosthenes
     l = [1]
