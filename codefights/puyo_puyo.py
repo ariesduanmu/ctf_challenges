@@ -35,8 +35,31 @@ import unittest
 def puyoPuyo(field, nextPiece):
     pass
 
+def pieces(piece):
+    a = piece[0]
+    b = piece[1]
+    if a == b:
+        return [[[a,b]],[[a],[b]]]
+    return [[[a,b]],[[a],[b]],[[b,a]],[[b],[a]]]
+
 def drop(field, piece, offset):
     pass
+
+def test():
+    field = ["      ", 
+             "      ", 
+             "      ", 
+             "      ", 
+             "      ", 
+             "  Y   ", 
+             "  Y   ", 
+             "  Y   ", 
+             "  B   ", 
+             "  BR  ", 
+             "GYYBR ", 
+             "GGYBR "]
+    nextPiece = "YG"
+
 
 class PuyoPuyoTest(unittest.TestCase):
     def test_1:
