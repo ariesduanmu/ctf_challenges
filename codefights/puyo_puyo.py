@@ -33,36 +33,81 @@ can get from placing this piece.
 import unittest
 
 def puyoPuyo(field, nextPiece):
-    pass
+    max_s = 0
+    for offset in range(len(field[0])):
+        for piece in [nextPiece, nextPiece[::-1]]:
+            for d in ["h","v"]:
+                fd = [list(f) for f in field]
+                drop_new_piece(fd, piece, offset, d)
+                s = score(fd)
+                max_s = max(max_s, s)
+    return max_s
 
-def pieces(piece):
-    a = piece[0]
-    b = piece[1]
-    if a == b:
-        return [[[a,b]],[[a],[b]]]
-    return [[[a,b]],[[a],[b]],[[b,a]],[[b],[a]]]
+def score(field):
+    s = eliminate(field)
+    i = 0
+    total = 0
+    while s != 0:
+        i += 1
+        total += s
+        refresh(field)
+        s = eliminate(field)
+    return total * i
 
-def drop(field, piece, offset):
-    pass
+def eliminate(field):
+    directors = ((0,1),(0,-1),(-1,0),(1,0))
+    checked = set()
+    eliminated = 0
+    for i in range(len(field)):
+        for j in range(len(field[0])):
+            p = field[i][j]
+            if p != " ":
+                checking = set(["{},{}".format(i,j)])
+                points = [[i,j]]
+                while len(points) > 0:
+                    next_point = []
+                    for p_r, p_c in points:
+                        for r, c in directors:
+                            x, y = p_r+r, p_c+c
+                            o = "{},{}".format(x,y)
+                            if 0<=x<len(field) and 0<=y<len(field[0]) and field[x][y] == p and o not in checking:
+                                checking.add(o)
+                                next_point.append([x,y])
+                            
+                    points = next_point
+                if len(checking) >= 4:
+                    for c in checking:
+                        x, y = c.split(",")
+                        field[int(x)][int(y)] = " "
+                    eliminated += len(checking)
+    return eliminated
 
-def test():
-    field = ["      ", 
-             "      ", 
-             "      ", 
-             "      ", 
-             "      ", 
-             "  Y   ", 
-             "  Y   ", 
-             "  Y   ", 
-             "  B   ", 
-             "  BR  ", 
-             "GYYBR ", 
-             "GGYBR "]
-    nextPiece = "YG"
+def refresh(field):
+    for i in range(len(field)-2,-1,-1):
+        for j in range(len(field[0])):
+            p = field[i][j]
+            if p != " ":
+                gravity(field, p, (i,j)) 
 
+def drop_new_piece(field, piece, offset, d="h"):
+    if d == "h" and offset+1 < len(field[0]):
+        gravity(field, piece[0], (-1,offset))
+        gravity(field, piece[1], (-1,offset+1))
+    elif d == "v":
+        gravity(field, piece[0], (-1,offset))
+        gravity(field, piece[1], (-1,offset))
+
+def gravity(field, p, position):
+    r, c = position
+    for i in range(len(field)-1, r, -1):
+        if field[i][c] == " ":
+            field[i][c] = p
+            if r != -1:
+                field[r][c] = " "
+            break
 
 class PuyoPuyoTest(unittest.TestCase):
-    def test_1:
+    def test_1(self):
         field = ["      ", 
                  "      ", 
                  "      ", 
