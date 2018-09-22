@@ -9,34 +9,35 @@ def compress(data):
     n = 0x81
     result = []
     pre = None
-    for d in data:
-        if pre is None:
-            pre = d
-        else:
-            p_c = pre+d
-            if p_c not in builder:
-                builder[p_c] = n
-                n += 1
-                result += [builder[pre]]
-                pre = d
-            else:
-                pre = p_c
-    result += [builder[pre]]
+    while len(data) > 0:
+        s = longest_prefix(builder, data)
+        result.append(builder.get(s))
+        t = len(s)
+        builder[data[:t+1]] = n
+        n += 1
+        data = data[t:]
     result += [0x80]
     return result
+
+def longest_prefix(builder, data):
+    l_prefix = ""
+    for k in builder:
+        if len(k) > len(l_prefix) and data[:len(k)] == k:
+            l_prefix = k
+    return l_prefix
 
 def expand(data):
     builder = {i:chr(i) for i in range(33,127)}
     result = ""
     n = 0x81
-    val = builder[data[0]]
+    val = builder.get(data[0])
     i = 1
     while i < len(data):
         result += val
         if data[i] == 0x80:
             break
         if data[i] in builder:
-            s = builder[data[i]]
+            s = builder.get(data[i])
         if n == data[i]:
             s = val + val[0]
 
