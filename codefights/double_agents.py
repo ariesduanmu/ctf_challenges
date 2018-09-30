@@ -5,7 +5,7 @@ LOL I did similiar challenge almost 20 years ago
 Full texts of reports are confidential, so your code will get only 
 conclusions as an array of booleans: The 0th element is Agent A's 
 report on Agent B, the 1st element is Agent B's report on Agent C, 
-and so on. true means agent was reported to be clean and false means 
+and so on. True means agent was reported to be clean and False means 
 agent was reported to be a mole.
 
 Your code should return a string where every character describes the 
@@ -22,80 +22,81 @@ import unittest
 class DoubleAgentsTest(unittest.TestCase):
     def test_1(self):
         moles = 3
-        reports = [true, false, false]
+        reports = [True, False, False]
         output = "MMM"
         self.assertEqual(doubleAgents(moles, reports), output)
 
     def test_2(self):
         moles = 1
-        reports = [true, false, false]
+        reports = [True, False, False]
         output = "CCM"
         self.assertEqual(doubleAgents(moles, reports), output)
 
     def test_3(self):
         moles = 2
-        reports = [true, false, false]
+        reports = [True, False, False]
         output = "M??"
         self.assertEqual(doubleAgents(moles, reports), output)
 
     def test_4(self):
         moles = 1
-        reports = [false, true]
+        reports = [False, True]
         output = "CM"
         self.assertEqual(doubleAgents(moles, reports), output)
 
     def test_5(self):
         moles = 1
-        reports = [true, true, true, false]
+        reports = [True, True, True, False]
         output = "MCCC"
         self.assertEqual(doubleAgents(moles, reports), output)
 
     def test_6(self):
         moles = 2
-        reports = [false, true, true, true]
+        reports = [False, True, True, True]
         output = "CMMC"
         self.assertEqual(doubleAgents(moles, reports), output)
 
     def test_7(self):
         moles = 3
-        reports = [false, true, false, false]
+        reports = [False, True, False, False]
         output = "?M??"
         self.assertEqual(doubleAgents(moles, reports), output)
 
     def test_8(self):
         moles = 1
-        reports = [true, true, false, true, true]
+        reports = [True, True, False, True, True]
         output = "CCCMC"
         self.assertEqual(doubleAgents(moles, reports), output)
 
     def test_9(self):
         moles = 2
-        reports = [true, false, true, true, false]
+        reports = [True, False, True, True, False]
         output = "M??CC"
         self.assertEqual(doubleAgents(moles, reports), output)
 
     def test_10(self):
         moles = 3
-        reports = [false, false, true, false, true, false]
+        reports = [False, False, True, False, True, False]
         output = "??????"
         self.assertEqual(doubleAgents(moles, reports), output)
 
     def test_11(self):
         moles = 4
-        reports = [true, false, true, true, false, false, true, false]
+        reports = [True, False, True, True, False, False, True, False]
         output = "????CM??"
         self.assertEqual(doubleAgents(moles, reports), output)
 
     def test_12(self):
         moles = 3
-        reports = [true, true, true, true, true, true, true, true, true, false, false, true, true, true, false, false, true, true, true, true, true, false, true, true, true, true]
+        reports = [True, True, True, True, True, True, True, True, True, False, False, True, True, True, False, False, True, True, True, True, True, False, True, True, True, True]
         output = "CCCCCCCCCCMCCCCMCCCCCCMCCC"
         self.assertEqual(doubleAgents(moles, reports), output)
 
     def test_13(self):
         moles = 7
-        reports = [true, true, true, true, true, true, false, true, true, true, true, true, true, false, false, false, true, false, true, true, false, false, false, true, true, true]
+        reports = [True, True, True, True, True, True, False, True, True, True, True, True, True, False, False, False, True, False, True, True, False, False, False, True, True, True]
         output = "CCCCCCCM?CCCCCM??????????C"
         self.assertEqual(doubleAgents(moles, reports), output)
 
-
+if __name__ == "__main__":
+    unittest.main()
