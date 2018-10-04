@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 from random import choice
-from PIL import Image
-import numpy as np
+
 
 class Maze():
-    def __init__(self, width=99, height=99):
+    def __init__(self, size):
+        width, height = size
         self.width = width - 1 + width%2
         self.height = height - 1 + height%2
         self.directions = [(2,0),(-2,0),(0,2),(0,-2)]
@@ -91,37 +91,5 @@ class Maze():
     def __call__(self):
         return self.generate()
 
-def generate_image(maze, size, output_filename="maze.png"):
-    width, height = size
-    w, h = len(maze.board[0]), len(maze.board)
-    a = min(width // w, height // h)
-
-    image_data = [[0]*width for _ in range(height)]
-    for i in range(h):
-        for j in range(w):
-            if (i,j) == maze.start_point:
-                amplify_dot(image_data, i, j, a, 100)
-            elif (i,j) == maze.end_point:
-                amplify_dot(image_data, i, j, a, 150)
-            elif maze.board[i][j] == 2:
-                amplify_dot(image_data, i, j, a)
-                
-    maze_img = Image.fromarray(np.asarray(dtype=np.dtype('uint8'),a=image_data), mode='L').convert('1')
-    maze_img.save(output_filename)
-
-def amplify_dot(board, i, j, a, color=255):
-    for x in range(i*a, (i+1)*a):
-        for y in range(j*a, (j+1)*a):
-            board[x][y] = color
-
-if __name__ == "__main__":
-    maze = Maze(100,100)
-    maze.generate()
-    print(maze)
-    generate_image(maze,(990,990))
-
-    # maze.generate()
-    # print(maze)
-    # generate_image(maze.board, (200,200))
 
 
