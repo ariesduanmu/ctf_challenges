@@ -34,6 +34,7 @@ def picture_dump(text, width, output_filename="out.png"):
         for j in range(width):
             data += [0] if binary_text[i+j] == "1" else [255]
         img_data += [data]
+    print(img_data)
     img = Image.fromarray(np.asarray(dtype=np.dtype('uint8'),a=img_data), mode='L').convert('1')
     img.save(output_filename)
     print(f"{len(binary_text)} bits")

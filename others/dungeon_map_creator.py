@@ -34,9 +34,8 @@ def split_room(room, min_room_space):
     return None, None
 
 def split_room_horizon(room, min_room_space):
-    min_y = min_room_space // (room.rx-room.lx) + 1
-    padding = 0#(randint(0, max(room.ry - room.ly - 2 * min_y, 0))) // 2
-    split_y = randint(room.ly + padding, room.ry - padding)
+    padding = (randint(0, (room.ry - room.ly) // 8)) // 2
+    split_y = randint(room.ly + (room.ry - room.ly) // 4, room.ry - (room.ry - room.ly) // 4)
     room_a_space = (room.rx - room.lx) * (split_y - padding - room.ly)
     room_a = Position(room.lx, room.ly, room.rx, split_y - padding, room_a_space >= min_room_space)
     room_b_space = (room.rx - room.lx) * (room.ry - split_y - padding)
@@ -44,9 +43,8 @@ def split_room_horizon(room, min_room_space):
     return room_a, room_b
 
 def split_room_vertical(room, min_room_space):
-    min_x = min_room_space // (room.ry-room.ly) + 1
-    padding = 0#(randint(0, max(room.rx - room.lx - 2 * min_x, 0))) // 2
-    split_x = randint(room.lx + padding, room.rx - padding)
+    padding = (randint(0, (room.rx - room.lx) // 8)) // 2
+    split_x = randint(room.lx + (room.rx - room.lx) // 4, room.rx - (room.rx - room.lx) // 4)
     room_a_space = (split_x - padding - room.lx) * (room.ry - room.ly)
     room_a = Position(room.lx, room.ly, split_x - padding, room.ry, room_a_space >= min_room_space)
     room_b_space = (room.rx - split_x - padding) * (room.ry - room.ly)
@@ -57,7 +55,7 @@ def split_room_vertical(room, min_room_space):
 
 
 if __name__ == "__main__":
-    rooms = generate_rooms(99,99,10,30)
+    rooms = generate_rooms(99,99,50,30)
     print(rooms)
     board = [["."] * 100 for _ in range(100)]
     for room in rooms:
@@ -73,7 +71,7 @@ if __name__ == "__main__":
             for j in range(room.ly+1, room.ry):
                 board[i][j] = " "
 
-    print("\n".join("".join(b) for b in board))
+    print("\n".join(" ".join(b) for b in board))
 
 
 
