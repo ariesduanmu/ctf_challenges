@@ -6,7 +6,7 @@ from collections import namedtuple
 Position = namedtuple("Position", ["lx","ly","rx","ry"])
 
 class Room():
-    def __init__(self, size, room_number=3, min_room_space=(3,3)):
+    def __init__(self, size, room_number=20, min_room_space=(5,5)):
         width, height = size
         self.width = width - 1 + width%2
         self.height = height - 1 + height%2
@@ -26,8 +26,14 @@ class Room():
         board = [[0]*self.width for _ in range(self.height)]
         # room type
         for room in self.rooms:
+            for i in range(room.lx, room.rx+1):
+                board[room.ly][i] = 1
+                board[room.ry][i] = 1
             for i in range(room.ly, room.ry+1):
-                for j in range(room.lx, room.rx+1):
+                board[i][room.lx] = 1
+                board[i][room.rx] = 1
+            for i in range(room.ly+1, room.ry):
+                for j in range(room.lx+1, room.rx):
                     board[i][j] = 2
         self._board = board
 
