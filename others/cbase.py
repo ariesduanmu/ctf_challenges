@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# Implement base64
 import string
 
 base = string.ascii_uppercase + string.ascii_lowercase + string.digits + "+/"
