@@ -46,10 +46,7 @@ def place_car_on_left_bottom(w, d, l, b, bottomleft, bottom_count, left_count, p
 		return ((0,0),0), ((0,0),0)
 	# 1. over space on bottom side
 
-	if height % car_height:
-		bottom_count_1 = height // car_height + 1
-	else:
-		bottom_count_1 = height // car_height
+	bottom_count_1 = height // car_height + (1 if height % car_height else 0)
 
 	if bottom_count_1 * car_height > d:
 		bottom_count_1 -= 1
@@ -61,10 +58,7 @@ def place_car_on_left_bottom(w, d, l, b, bottomleft, bottom_count, left_count, p
 
 	# 2. over space on left side
 
-	if width % car_width:
-		left_count_2 = width // car_width + 1
-	else:
-		left_count_2 = width // car_width
+	left_count_2 = width // car_width + (1 if width % car_width else 0)
 
 	if left_count_2 * car_width > d:
 		left_count_2 -= 1
